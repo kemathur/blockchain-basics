@@ -41,8 +41,6 @@ class Block:
             nonce += 1
             x = header + str(nonce)
             hashX = Block.create_hash(x)
-        print(hashX)
-        print ("======== :: nonce :: " , nonce)
         return nonce
 
     def computeHash(self):
@@ -65,13 +63,22 @@ class Block:
 
     def getDifficulty(self):
         return self.difficulty
+    
+    def __repr__(self):
+        return 'height: %s \nts: %s \nhash: %s' % \
+            (self.blockHeight, self.ts, self.getCurrentHash())
 
 
 def isChainValid(blockChain):
-    for b in blockChain:
+    n = len(blockChain)
+    for i, b in enumerate(blockChain):
         difficulty = b.getDifficulty()
         bHash = b.getCurrentHash()
-        if bHash[:difficulty] != '0'*difficulty:
+        if i == n-1:
+            if bHash[:difficulty] != '0'*difficulty:
+                return False
+            break
+        if bHash != blockChain[i+1].getPrevHash():
             return False
     return True
 
@@ -82,6 +89,6 @@ if __name__ == "__main__":
     blockChain.append(Block(blockChain[0].getCurrentHash(), ['c', 'd']))
 
     for b in blockChain:
-        print (b.getBlockHeight(), b.getCurrentHash())
+        print (b)
     print (isChainValid(blockChain))
 
