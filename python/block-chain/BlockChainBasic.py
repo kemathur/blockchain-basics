@@ -8,9 +8,8 @@ class Block:
         self.trx = trx
         self.ts = time.time_ns()
         self.blockHeight = Block.count
-        # self.currentHash = self.computeHash()
-        self.difficulty = 2
-        self.nonce = self.computeNonce()
+        self.currentHash = self.computeHash()
+        self.difficulty = 4
         Block.count += 1
 
     @staticmethod
@@ -21,8 +20,8 @@ class Block:
 
     @staticmethod
     def create_hash(source):
-        # return '('+ source + ')' +'*'
-        return Block.getSHA2HexValue(source)
+        return '('+ source + ')' +'*'
+        # return getSHA2HexValue(source)
 
     def createHeader(self):
         header = self.prevHash + str(self.ts)
@@ -31,19 +30,6 @@ class Block:
             trxString += t
         header += Block.create_hash(trxString)
         return header
-
-    # Basically mine the block
-    def computeNonce(self):
-        nonce = 0
-        hashX = "x"
-        header = self.createHeader()
-        while hashX[:self.difficulty] != '0'*self.difficulty:
-            nonce += 1
-            x = header + str(nonce)
-            hashX = Block.create_hash(x)
-        print(hashX)
-        print ("======== :: nonce :: " , nonce)
-        return nonce
 
     def computeHash(self):
         return '0000' + Block.create_hash(self.createHeader())
@@ -61,7 +47,7 @@ class Block:
         return self.blockHeight
     
     def getCurrentHash(self):
-        return Block.create_hash(self.createHeader() + str(self.nonce))
+        return self.currentHash
 
     def getDifficulty(self):
         return self.difficulty
@@ -75,7 +61,6 @@ def isChainValid(blockChain):
             return False
     return True
 
-
 if __name__ == "__main__":
     blockChain = []
     blockChain.append(Block("", ['a', 'b']))
@@ -84,4 +69,3 @@ if __name__ == "__main__":
     for b in blockChain:
         print (b.getBlockHeight(), b.getCurrentHash())
     print (isChainValid(blockChain))
-
